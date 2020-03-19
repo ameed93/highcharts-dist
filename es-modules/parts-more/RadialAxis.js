@@ -11,7 +11,7 @@
 import H from '../parts/Globals.js';
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
 import '../parts/Axis.js';
 import './Pane.js';
 var Axis = H.Axis, noop = H.noop, 
@@ -133,13 +133,13 @@ radialAxisMixin = {
      * @private
      */
     setOptions: function (userOptions) {
-        var options = this.options = merge(this.defaultOptions, this.defaultPolarOptions, userOptions);
+        var options = this.options = merge(Axis.defaultOptions, this.defaultPolarOptions, userOptions);
         // Make sure the plotBands array is instanciated for each Axis
         // (#2649)
         if (!options.plotBands) {
             options.plotBands = [];
         }
-        H.fireEvent(this, 'afterSetOptions');
+        fireEvent(this, 'afterSetOptions');
     },
     /**
      * Wrap the getOffset method to return zero offset for title or labels in a
@@ -582,12 +582,10 @@ addEvent(Axis, 'init', function (e) {
         isCircular = this.horiz;
         this.defaultPolarOptions = isCircular ?
             this.defaultCircularOptions :
-            merge(coll === 'xAxis' ?
-                this.defaultOptions : this.defaultYAxisOptions, this.defaultRadialOptions);
+            merge(coll === 'xAxis' ? Axis.defaultOptions : Axis.defaultYAxisOptions, this.defaultRadialOptions);
         // Apply the stack labels for yAxis in case of inverted chart
         if (inverted && coll === 'yAxis') {
-            this.defaultPolarOptions.stackLabels =
-                this.defaultYAxisOptions.stackLabels;
+            this.defaultPolarOptions.stackLabels = Axis.defaultYAxisOptions.stackLabels;
         }
     }
     // Disable certain features on angular and polar axes
